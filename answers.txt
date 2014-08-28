@@ -1,0 +1,61 @@
+# Fill in your name, student ID, and email address in this file.
+# If you are working in a team, fill out the information for both team 
+# members.
+
+# SUBMIT THE LAB ONLY ONCE (from only one partner). This file will be
+# automatically parsed in order to give both team members credit for the
+# lab.
+
+# You need to fill in the EXERCISE sections describing your solutions
+# for Tasks 1, 2, and 3, as well as write the corresponding code.
+# If you did one or more extra credit problems, indicate which one in the
+# appropriate section below (remove the # sign first). If you have any other
+# information you'd like us to know, please add it at the end of the file.
+
+# Partner 1
+Name: Jeffrey Tai 
+Student ID: 504147859
+Email: jeffreytai@ucla.edu
+
+# Partner 2 (if you're working in a team)
+Name: Brian Chang
+Student ID: 304151550
+Email: briancc23@yahoo.com
+
+# Partner 3 (if you're working in a team)
+Name: Tammy Wong
+Student ID: 904141761
+Email: tammyhwong@yahoo.com
+
+# Partner 4 (if you're working in a team)
+Name: Gene Shaffer
+Student ID: 604158809
+Email: genenakamura@gmail.com 
+
+# EXERCISE 1: What method you used to make your peer download and upload
+#    files in parallel?  (~1-3 sentences)
+My method of peer download and uploading files utilizes a maximum of 8 child processes that work in parallel. Whenever a upload or download is being carried out, a child will be forked in order to carry out the rest of the task.
+
+# EXERCISE 2A: What conditions did you find and fix that would have
+#    triggered a buffer overrun bug?  (~1-3 sentences each)
+The buffer overrun bug occurred whenever the name of the file was too long. There was no check on "filename" to see if it exceeded 256, which was defined to be the FILENAMESIX, of size of task_t::filename. To correct this, a check was done in "start_download" before any of the file was downloaded, using the strnlen function.
+
+# EXERCISE 2B: What other robustness problems did you fix?  (~1-3 sentences
+#    each)
+Robustness was defined such that - in the case that a download/upload was erroneous, other downloads/uploads wouldn't fail along with this. Our approach of using forked childs to manage the downloads and uploads took care of this situation. If one caused an error or caused the respective process to fail, the other downloads/uploads would continue without an error. Only that specific forked child would be the one to fail.
+
+There was a problem with robustness when the requested file to be downloaded was too long. In order to identify this, we defined a variable DOWNLOADSIZ that was set at 64 MB long. We deemed this to be a large enough size for a file to be downloadable; yet at the same time, it would be define the difference between a valid file and a file that was too large in size. The check was made in the function "task_download" where the file would be read into the task buffer from the peer and then written from the task buffer onto the disk.
+
+Aside from the previously mentioned fixes to robustness, we couldn't do the others as the "bad tracker" and "popular tracker" weren't functioning; therefore, we were only instructed to do parts that could be tested by the "good tracker" and "slow tracker".
+
+# EXERCISE 3: Describe the attacks you implemented for "evil mode".  Why
+#    are they attacks?  (~3-10 sentences each)
+In the Spring 2014 Piazza forum, one of the posts expanded on the possibility of an attack if someone attempted to insert or upload a file that wasn't present in the current directory. We added to our task_upload function so that we could check the "." or current directory in order to find the filename. The attack would also make it seem as if the file being fed in was the same name as the original, expected one. When this attack is detected, we give it the evil mode of 1. In this case, the filename "../error" was given rather than the "t->filename". 
+
+Also introduced from the former Piazza forum, when evil_mode is equal to 2, we introduce an attack in which we request a file while the peer is attempting to upload it. The effect of this is that we create an infinite while loop up until the peer's disk is filled up. In the while loop, we continually write to the peer's disk. Once the disk is full, which means that the write(int, const void *, size_t) function returns less than or equal to 0, we will output a message saying that the peer's disk is now full and then jump to the try_again handler.
+
+# Extra credit problems
+#Extra credit problem: none
+
+# Add any other information you'd like us to know below this line.
+We wish that we were able to cover cryptographic hash functions before this project. The topic of cryptographic hash functions just came up in the Lecture 12 reading; however, we didn't have enough time to thoroughly cover everything in time to effectively implement the hash function. Security is one of the most interesting topics of computer science, and I (Jeffrey) was definitely looking to take the course in security offered by Professor Reiher. 
